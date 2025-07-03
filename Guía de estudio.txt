@@ -1,0 +1,181 @@
+¡Por supuesto! 🙌
+Aquí tenés la Guía de Estudio completa del proyecto Vuelo de Palabras 🕊️, organizada paso por paso para que la puedas usar como material de aprendizaje o imprimirla:
+
+
+---
+
+📘 Guía de Estudio: Vuelo de Palabras 🕊️
+
+
+---
+
+1. ¿Qué es Vuelo de Palabras?
+
+Es una aplicación creada con React Native que permite:
+
+Escribir poemas.
+
+Guardarlos localmente en el celular.
+
+Visualizar la lista de poemas.
+
+Generar versos automáticos relacionados con un tema (amor, tristeza, libertad), usando una IA básica.
+
+
+
+---
+
+2. Estructura del Proyecto
+
+vuelo-de-palabras/
+├── App.js                # Código principal de la app
+├── aiHelper.js          # Generador de versos por tema
+├── package.json         # Configuración del proyecto
+├── .gitignore           # Archivos a ignorar por Git
+├── assets/              # Carpeta para imágenes o fondos
+└── README.md            # Descripción del proyecto
+
+
+---
+
+3. ¿Cómo se escriben y guardan los poemas?
+
+El usuario escribe el poema en un TextInput.
+
+Al presionar el botón “Guardar poema”, el poema se guarda en una lista interna (poemas) y también en la memoria del celular usando AsyncStorage.
+
+La lista se actualiza en pantalla y el campo de entrada se limpia automáticamente.
+
+
+
+---
+
+4. ¿Qué hace la función guardarPoema?
+
+Esta función:
+
+1. Verifica que el poema no esté vacío.
+
+
+2. Crea un nuevo objeto con ID único (usando Date.now()).
+
+
+3. Agrega ese objeto a la lista de poemas (poemas).
+
+
+4. Guarda la lista actualizada en AsyncStorage (para que se conserve al cerrar la app).
+
+
+
+
+---
+
+5. ¿Cómo se cargan los poemas guardados?
+
+Al iniciar la app (useEffect), se llama a cargarPoemas, que lee desde AsyncStorage y muestra los poemas guardados en pantalla.
+
+Esto garantiza persistencia entre sesiones.
+
+
+
+---
+
+6. ¿Cómo se genera un verso automático?
+
+En aiHelper.js se encuentra la función generarVersoAleatorio(tema), que contiene versos predeterminados para temas como:
+
+Amor
+
+Libertad
+
+Tristeza
+
+
+La app importa esta función con:
+
+import { generarVersoAleatorio } from './aiHelper';
+
+Luego, se puede usar por ejemplo así:
+
+const verso = generarVersoAleatorio("amor");
+
+
+
+---
+
+7. ¿Cómo se ve el verso generado?
+
+Al presionar el botón “Generar verso (tema: amor)”, el verso se muestra debajo del botón en estilo itálico.
+
+Esto se logra con un estado adicional (useState) que guarda el verso generado.
+
+
+
+---
+
+8. ¿Cómo funciona la lista de poemas?
+
+Se usa un componente de React Native llamado FlatList.
+
+Este renderiza dinámicamente cada poema en un Text, con un estilo visual (borde, fondo, espaciado).
+
+
+
+---
+
+9. ¿Puedo ampliar esta app?
+
+¡Sí! Algunas ideas para mejorar:
+
+Exportar los poemas a un archivo .txt o .pdf.
+
+Compartir poemas por redes sociales.
+
+Agregar autenticación de usuarios.
+
+Crear perfiles de poetas.
+
+Agregar más temas al generador de versos.
+
+Permitir que los usuarios suban fotos de inspiración a assets/.
+
+
+
+---
+
+10. ¿Qué tecnologías utiliza?
+
+React Native: para construir la app móvil.
+
+Expo: plataforma que simplifica el desarrollo con React Native.
+
+JavaScript ES6: lenguaje base.
+
+AsyncStorage: sistema de almacenamiento local en el celular.
+
+FlatList, TextInput, Button, View: componentes clave de interfaz.
+
+
+
+---
+
+🧠 Extra: ¿Qué hace cada archivo?
+
+App.js: control principal de la app (interfaz, estados, eventos).
+
+aiHelper.js: lógica para devolver versos aleatorios.
+
+package.json: indica librerías usadas y comandos.
+
+.gitignore: evita subir carpetas innecesarias como node_modules.
+
+assets/: carpeta donde podés poner imágenes de fondo o íconos.
+
+README.md: guía rápida del proyecto.
+
+
+
+---
+
+¿Querés que te lo convierta en un .txt descargable también o preferís que sigamos agregando funciones nuevas a la app?
+
