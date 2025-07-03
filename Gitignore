@@ -1,0 +1,6 @@
+# node_modules y archivos de configuración temporales
+node_modules/
+.expo/
+.expo-shared/
+.DS_Store
+.env
