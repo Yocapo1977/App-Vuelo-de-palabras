@@ -1,0 +1,1 @@
+// App.js - punto de entrada del proyecto React Native

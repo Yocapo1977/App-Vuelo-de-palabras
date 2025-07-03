@@ -1,2 +1,3 @@
-# App-Vuelo-de-palabras
-App para generar y cargar poesías 
+# Vuelo de Palabras
+
+App para escribir, guardar y compartir poesía.
