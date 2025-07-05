@@ -1,5 +1,7 @@
 # Vuelo de Palabras 🕊️
 
+“App poética para escribir, guardar y compartir versos con inteligencia artificial y diseño personalizado.”
+
 Primera versión del proyecto en React Native para escribir y guardar poemas localmente.
 
 ## Funcionalidad
