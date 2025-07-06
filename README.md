@@ -1,6 +1,6 @@
 # ✨ Vuelo de Palabras ✍️📱
 
-> *“La sonrisa es el perfecto abrazo del alma, que deja en un instante la alegría y deja mudas las palabras y salpicado el corazón...”*
+> *“La sonrisa es el perfecto abrazo del alma, que congela en un instante la alegría y deja mudas las palabras y salpicado el corazón...”*
 
 **Vuelo de Palabras** es una aplicación para poetas, soñadores y escritores que desean crear, guardar y compartir versos desde el corazón… y desde el celular o la web.
 
