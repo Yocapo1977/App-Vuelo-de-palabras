@@ -14,11 +14,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import AnimatedBackground from '../components/AnimatedBackground';
 import PoemCard from '../components/PoemCard';
+import SearchAndFilters from '../components/SearchAndFilters';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
   const [poems, setPoems] = useState([]);
+  const [filteredPoems, setFilteredPoems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, logout } = useAuth();
   const { theme, toggleTheme, isDarkMode } = useTheme();
@@ -29,6 +31,7 @@ export default function HomeScreen({ navigation }) {
     // Suscribirse a cambios en tiempo real
     const unsubscribe = FirestoreService.subscribeToUserPoems(user.uid, (updatedPoems) => {
       setPoems(updatedPoems);
+      setFilteredPoems(updatedPoems);
       setLoading(false);
     });
 
@@ -84,6 +87,66 @@ export default function HomeScreen({ navigation }) {
       month: '2-digit',
       year: 'numeric'
     });
+  };
+
+  const handleSearch = (query, filters) => {
+    let filtered = [...poems];
+
+    // Filtrar por texto de búsqueda
+    if (query.trim()) {
+      const searchTerm = query.toLowerCase();
+      filtered = filtered.filter(poem => 
+        poem.title.toLowerCase().includes(searchTerm) ||
+        poem.content.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filtrar por rango de fechas
+    if (filters.dateRange !== 'all') {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      filtered = filtered.filter(poem => {
+        const poemDate = new Date(poem.createdAt);
+        
+        switch (filters.dateRange) {
+          case 'today':
+            return poemDate >= startOfDay;
+          case 'week':
+            const weekAgo = new Date(startOfDay.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return poemDate >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(startOfDay.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return poemDate >= monthAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Ordenar
+    filtered.sort((a, b) => {
+      let comparison = 0;
+      
+      switch (filters.sortBy) {
+        case 'title':
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case 'wordCount':
+          const wordsA = a.content.trim().split(/\s+/).length;
+          const wordsB = b.content.trim().split(/\s+/).length;
+          comparison = wordsA - wordsB;
+          break;
+        case 'date':
+        default:
+          comparison = new Date(a.updatedAt) - new Date(b.updatedAt);
+          break;
+      }
+      
+      return filters.sortOrder === 'desc' ? -comparison : comparison;
+    });
+
+    setFilteredPoems(filtered);
   };
 
   const renderPoemItem = ({ item, index }) => (
