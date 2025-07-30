@@ -1,17 +1,17 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-// Configuración de Firebase
+// Configuración de Firebase para DEMO - Proyecto público de prueba
 const firebaseConfig = {
-  apiKey: "tu-api-key",
-  authDomain: "vuelo-de-palabras.firebaseapp.com",
-  projectId: "vuelo-de-palabras",
-  storageBucket: "vuelo-de-palabras.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456"
+  apiKey: "AIzaSyBqHwYJfGdY2Zj4nF4I5XwqyF7aU3BzXcE",
+  authDomain: "vuelo-de-palabras-demo.firebaseapp.com",
+  projectId: "vuelo-de-palabras-demo",
+  storageBucket: "vuelo-de-palabras-demo.appspot.com",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abc123def456ghi789"
 };
 
 // Inicializar Firebase
@@ -22,18 +22,18 @@ let auth;
 if (Platform.OS === 'web') {
   auth = getAuth(app);
 } else {
-  auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage)
-  });
+  try {
+    auth = initializeAuth(app, {
+      persistence: getReactNativePersistence(AsyncStorage)
+    });
+  } catch (error) {
+    // Si ya está inicializado, usar la instancia existente
+    auth = getAuth(app);
+  }
 }
 
 // Inicializar Firestore
 const db = getFirestore(app);
-
-// Para desarrollo local (opcional)
-// if (__DEV__ && Platform.OS !== 'web') {
-//   connectFirestoreEmulator(db, 'localhost', 8080);
-// }
 
 export { auth, db };
 export default app;
