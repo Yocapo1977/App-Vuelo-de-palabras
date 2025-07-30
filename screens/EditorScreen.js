@@ -10,12 +10,14 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import { StorageService } from '../utils/storage';
+import { FirestoreService } from '../utils/firestoreService';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function EditorScreen({ navigation, route }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
+  const { user } = useAuth();
   
   const isEditing = route?.params?.poem;
   const existingPoem = route?.params?.poem;
@@ -52,6 +54,11 @@ export default function EditorScreen({ navigation, route }) {
       return;
     }
 
+    if (!user) {
+      Alert.alert('Error', 'Debes iniciar sesión para guardar poemas');
+      return;
+    }
+
     try {
       setSaving(true);
       
@@ -61,10 +68,10 @@ export default function EditorScreen({ navigation, route }) {
       };
 
       if (isEditing) {
-        await StorageService.updatePoem(existingPoem.id, poemData);
+        await FirestoreService.updatePoem(existingPoem.id, poemData);
         Alert.alert('Éxito', 'Poema actualizado correctamente');
       } else {
-        await StorageService.savePoem(poemData);
+        await FirestoreService.savePoem(user.uid, poemData);
         Alert.alert('Éxito', 'Poema guardado correctamente');
       }
 

@@ -9,38 +9,56 @@
 ## 🌟 Funciones principales
 
 - 🖋️ **Editor de poesía** - Interface minimalista y elegante para escribir
-- 💾 **Almacenamiento local** - Tus poemas se guardan de forma segura
+- 👤 **Cuentas de usuario** - Registro e inicio de sesión seguro
+- ☁️ **Sincronización en la nube** - Tus poemas en todos tus dispositivos
+- 🔄 **Tiempo real** - Los cambios se reflejan instantáneamente
 - 📱 **Multiplataforma** - Compatible con móviles, tabletas y web
 - 🌐 **PWA Ready** - Funciona como aplicación web progresiva
 - 📤 **Compartir poemas** - Comparte tus creaciones fácilmente
 - ✏️ **Edición completa** - Modifica tus poemas cuando quieras
 - 📊 **Estadísticas** - Cuenta de palabras, líneas y caracteres
+- 🔒 **Privacidad** - Solo tú puedes acceder a tus poemas
 - 🎨 **Diseño minimalista** - Enfoque en la escritura sin distracciones
 
 ---
 
 ## 📱 Características de la App
 
-### Pantalla Principal
-- Lista de todos tus poemas guardados
+### 🔐 Sistema de Autenticación
+- Registro de usuarios con email y contraseña
+- Inicio de sesión seguro
+- Restablecimiento de contraseña
+- Persistencia de sesión entre dispositivos
+
+### 🏠 Pantalla Principal
+- Lista de todos tus poemas sincronizados
 - Vista previa del contenido
 - Fechas de creación y modificación
 - Contador de poemas
+- Información del usuario conectado
 - Botón flotante para crear nuevos poemas
+- Actualización en tiempo real
 
-### Editor de Poemas
+### ✏️ Editor de Poemas
 - Campo de título opcional
 - Área de texto optimizada para poesía
 - Contador de caracteres en tiempo real
-- Autoguardado y confirmación de cambios
+- Guardado automático en la nube
+- Confirmación de cambios
 - Placeholder inspiracional
 
-### Vista de Detalle
+### 📖 Vista de Detalle
 - Visualización completa del poema
 - Información de creación y edición
 - Estadísticas detalladas (palabras, líneas, caracteres)
 - Opciones para compartir, editar y eliminar
 - Interfaz elegante con tipografía serif
+
+### ☁️ Sincronización en Tiempo Real
+- Los cambios se reflejan instantáneamente en todos los dispositivos
+- Escribe en el móvil, ve en la web y viceversa
+- No necesitas refrescar manualmente
+- Migración automática de poemas locales
 
 ---
 
@@ -64,7 +82,11 @@ cd App-Vuelo-de-palabras
 npm install
 ```
 
-3. **Inicia la aplicación:**
+3. **Configura Firebase:**
+- Sigue las instrucciones en `firebase-setup.md`
+- Actualiza las credenciales en `utils/firebase.js`
+
+4. **Inicia la aplicación:**
 
 **Para desarrollo web:**
 ```bash
@@ -101,8 +123,11 @@ npx expo build:ios
 
 - **React Native** - Framework principal
 - **Expo** - Plataforma de desarrollo
+- **Firebase** - Backend completo (Auth + Firestore)
 - **React Navigation** - Navegación entre pantallas
-- **AsyncStorage** - Almacenamiento local
+- **Firestore** - Base de datos en tiempo real
+- **Firebase Auth** - Autenticación de usuarios
+- **AsyncStorage** - Almacenamiento local (migración)
 - **JavaScript ES6+** - Lenguaje de programación
 
 ---
@@ -112,41 +137,65 @@ npx expo build:ios
 ```
 vuelo-de-palabras/
 ├── screens/
-│   ├── HomeScreen.js      # Pantalla principal con lista de poemas
-│   ├── EditorScreen.js    # Pantalla de edición/creación
-│   └── PoemDetailScreen.js # Pantalla de detalle del poema
+│   ├── HomeScreen.js       # Pantalla principal con lista de poemas
+│   ├── EditorScreen.js     # Pantalla de edición/creación
+│   ├── PoemDetailScreen.js # Pantalla de detalle del poema
+│   ├── LoginScreen.js      # Pantalla de inicio de sesión
+│   └── RegisterScreen.js   # Pantalla de registro
+├── contexts/
+│   └── AuthContext.js      # Contexto de autenticación global
 ├── utils/
-│   └── storage.js         # Servicio de almacenamiento
-├── App.js                 # Componente principal y navegación
-├── package.json           # Dependencias y scripts
-├── app.json              # Configuración de Expo
-└── README.md             # Documentación
+│   ├── firebase.js         # Configuración de Firebase
+│   ├── authService.js      # Servicio de autenticación
+│   ├── firestoreService.js # Servicio de base de datos
+│   └── storage.js          # Servicio de almacenamiento local
+├── App.js                  # Componente principal y navegación
+├── package.json            # Dependencias y scripts
+├── app.json               # Configuración de Expo
+├── firebase-setup.md      # Instrucciones de configuración
+└── README.md              # Documentación
 ```
 
 ---
 
 ## 🎯 Funcionalidades Implementadas
 
+### ✅ Sistema de Usuarios
+- [x] Registro de cuentas con email/contraseña
+- [x] Inicio de sesión seguro
+- [x] Restablecimiento de contraseña
+- [x] Persistencia de sesión
+- [x] Cerrar sesión
+
 ### ✅ Gestión de Poemas
-- [x] Crear nuevos poemas
+- [x] Crear nuevos poemas en la nube
 - [x] Editar poemas existentes
 - [x] Eliminar poemas (con confirmación)
-- [x] Visualizar lista de poemas
+- [x] Visualizar lista de poemas sincronizada
 - [x] Ver detalles completos de cada poema
+
+### ✅ Sincronización y Base de Datos
+- [x] Almacenamiento en Firebase Firestore
+- [x] Sincronización en tiempo real
+- [x] Escucha de cambios automática
+- [x] Migración automática de datos locales
+- [x] Reglas de seguridad por usuario
 
 ### ✅ Interfaz de Usuario
 - [x] Diseño responsive y elegante
 - [x] Navegación fluida entre pantallas
-- [x] Botones de acción intuitivos
-- [x] Confirmaciones para acciones destructivas
+- [x] Pantallas de autenticación
+- [x] Información del usuario conectado
 - [x] Estados de carga y feedback visual
+- [x] Confirmaciones para acciones destructivas
 
 ### ✅ Funciones Avanzadas
 - [x] Compartir poemas en redes sociales
 - [x] Estadísticas de texto (palabras, líneas, caracteres)
-- [x] Autoguardado y validación de cambios
+- [x] Guardado automático en la nube
 - [x] Fechas de creación y modificación
 - [x] Ordenamiento por fecha de actualización
+- [x] Acceso multiplataforma (móvil ↔ web)
 
 ---
 
@@ -156,8 +205,10 @@ vuelo-de-palabras/
 - [ ] Categorías y etiquetas
 - [ ] Exportar poemas a PDF
 - [ ] Modo oscuro
-- [ ] Respaldo en la nube
-- [ ] Compartir con otros usuarios
+- [ ] Compartir poemas entre usuarios
+- [ ] Colecciones de poemas
+- [ ] Backup y restauración
+- [ ] Configuración de privacidad avanzada
 
 ---
 

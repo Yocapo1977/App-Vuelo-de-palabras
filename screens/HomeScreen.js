@@ -6,37 +6,49 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
-  Dimensions
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
-import { StorageService } from '../utils/storage';
+import { FirestoreService } from '../utils/firestoreService';
+import { useAuth } from '../contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
   const [poems, setPoems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
-    loadPoems();
-    
-    // Recargar poemas cuando regrese a esta pantalla
-    const unsubscribe = navigation.addListener('focus', () => {
-      loadPoems();
+    if (!user) return;
+
+    // Suscribirse a cambios en tiempo real
+    const unsubscribe = FirestoreService.subscribeToUserPoems(user.uid, (updatedPoems) => {
+      setPoems(updatedPoems);
+      setLoading(false);
     });
 
     return unsubscribe;
-  }, [navigation]);
+  }, [user]);
 
-  const loadPoems = async () => {
-    try {
-      setLoading(true);
-      const savedPoems = await StorageService.getPoems();
-      setPoems(savedPoems.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)));
-    } catch (error) {
-      Alert.alert('Error', 'No se pudieron cargar los poemas');
-    } finally {
-      setLoading(false);
-    }
+  const handleLogout = async () => {
+    Alert.alert(
+      'Cerrar sesión',
+      '¿Estás seguro de que quieres cerrar sesión?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Cerrar sesión',
+          style: 'destructive',
+          onPress: async () => {
+            const result = await logout();
+            if (!result.success) {
+              Alert.alert('Error', 'No se pudo cerrar sesión');
+            }
+          }
+        }
+      ]
+    );
   };
 
   const deletePoem = async (poemId) => {
@@ -50,8 +62,8 @@ export default function HomeScreen({ navigation }) {
           style: 'destructive',
           onPress: async () => {
             try {
-              await StorageService.deletePoem(poemId);
-              loadPoems();
+              await FirestoreService.deletePoem(poemId);
+              // No necesitamos recargar manualmente, el listener se encarga
             } catch (error) {
               Alert.alert('Error', 'No se pudo eliminar el poema');
             }
@@ -100,17 +112,32 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Mis Poemas</Text>
-        <Text style={styles.headerSubtitle}>
-          {poems.length} {poems.length === 1 ? 'poema' : 'poemas'}
-        </Text>
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.headerTitle}>Mis Poemas</Text>
+            <Text style={styles.headerSubtitle}>
+              {poems.length} {poems.length === 1 ? 'poema' : 'poemas'}
+            </Text>
+          </View>
+          <View style={styles.userInfo}>
+            <Text style={styles.userName}>Hola, {user?.displayName || 'Usuario'}</Text>
+            <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+              <Text style={styles.logoutText}>Cerrar sesión</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
 
       <FlatList
         data={poems}
         renderItem={renderPoemItem}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={EmptyComponent}
+        ListEmptyComponent={loading ? () => (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#007bff" />
+            <Text style={styles.loadingText}>Cargando tus poemas...</Text>
+          </View>
+        ) : EmptyComponent}
         contentContainerStyle={poems.length === 0 ? styles.emptyList : styles.list}
         showsVerticalScrollIndicator={false}
       />
@@ -227,5 +254,39 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  userInfo: {
+    alignItems: 'flex-end',
+  },
+  userName: {
+    fontSize: 14,
+    color: '#2c3e50',
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  logoutButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  logoutText: {
+    fontSize: 12,
+    color: '#dc3545',
+    fontWeight: '500',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#6c757d',
   },
 });

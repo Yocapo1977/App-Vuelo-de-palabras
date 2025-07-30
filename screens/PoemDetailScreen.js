@@ -9,7 +9,7 @@ import {
   Share,
   Dimensions
 } from 'react-native';
-import { StorageService } from '../utils/storage';
+import { FirestoreService } from '../utils/firestoreService';
 
 const { width } = Dimensions.get('window');
 
@@ -84,7 +84,7 @@ export default function PoemDetailScreen({ navigation, route }) {
           style: 'destructive',
           onPress: async () => {
             try {
-              await StorageService.deletePoem(poem.id);
+              await FirestoreService.deletePoem(poem.id);
               Alert.alert('Eliminado', 'El poema ha sido eliminado');
               navigation.goBack();
             } catch (error) {
