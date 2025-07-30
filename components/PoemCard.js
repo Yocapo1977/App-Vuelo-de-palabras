@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -18,6 +19,7 @@ export default function PoemCard({
   index = 0 
 }) {
   const [scaleValue] = useState(new Animated.Value(1));
+  const { theme } = useTheme();
 
   const handlePressIn = () => {
     Animated.spring(scaleValue, {
@@ -52,13 +54,13 @@ export default function PoemCard({
     return lines.slice(0, 3);
   };
 
-  // Colores dinámicos basados en el índice
+  // Colores dinámicos basados en el índice y tema
   const cardColors = [
-    { primary: '#007bff', secondary: '#e3f2fd' },
-    { primary: '#28a745', secondary: '#e8f5e8' },
-    { primary: '#dc3545', secondary: '#ffeaea' },
-    { primary: '#6f42c1', secondary: '#f3e8ff' },
-    { primary: '#fd7e14', secondary: '#fff3e0' },
+    { primary: theme.primary, secondary: theme.primary + '20' },
+    { primary: theme.success, secondary: theme.success + '20' },
+    { primary: theme.error, secondary: theme.error + '20' },
+    { primary: theme.accent, secondary: theme.accent + '20' },
+    { primary: theme.warning, secondary: theme.warning + '20' },
   ];
 
   const colorScheme = cardColors[index % cardColors.length];
@@ -71,7 +73,14 @@ export default function PoemCard({
       ]}
     >
       <TouchableOpacity
-        style={[styles.card, { borderLeftColor: colorScheme.primary }]}
+        style={[
+          styles.card, 
+          { 
+            borderLeftColor: colorScheme.primary,
+            backgroundColor: theme.card,
+            shadowColor: theme.text,
+          }
+        ]}
         onPress={onPress}
         onLongPress={onLongPress}
         onPressIn={handlePressIn}
@@ -81,7 +90,7 @@ export default function PoemCard({
         {/* Header con título y estadísticas */}
         <View style={styles.cardHeader}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title} numberOfLines={1}>
+            <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>
               {poem.title}
             </Text>
             <View style={styles.statsContainer}>
@@ -93,7 +102,7 @@ export default function PoemCard({
             </View>
           </View>
           <View style={styles.dateContainer}>
-            <Text style={styles.date}>{formatDate(poem.updatedAt)}</Text>
+            <Text style={[styles.date, { color: theme.textSecondary }]}>{formatDate(poem.updatedAt)}</Text>
           </View>
         </View>
 
@@ -102,21 +111,21 @@ export default function PoemCard({
           {getPreviewLines(poem.content).map((line, index) => (
             <Text 
               key={index} 
-              style={styles.previewLine}
+              style={[styles.previewLine, { color: theme.textSecondary }]}
               numberOfLines={1}
             >
               {line.trim()}
             </Text>
           ))}
           {poem.content.split('\n').length > 3 && (
-            <Text style={styles.moreText}>
+            <Text style={[styles.moreText, { color: theme.textSecondary }]}>
               +{poem.content.split('\n').length - 3} líneas más...
             </Text>
           )}
         </View>
 
         {/* Footer con acciones rápidas */}
-        <View style={styles.cardFooter}>
+        <View style={[styles.cardFooter, { backgroundColor: theme.surface }]}>
           <View style={styles.tagsContainer}>
             <View style={[styles.tag, { backgroundColor: colorScheme.primary }]}>
               <Text style={styles.tagText}>✨ Poesía</Text>
@@ -152,12 +161,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     marginHorizontal: 16,
     borderLeftWidth: 4,
     elevation: 3,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -177,7 +184,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2c3e50',
     marginBottom: 8,
   },
   statsContainer: {
@@ -197,7 +203,6 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
-    color: '#6c757d',
     fontWeight: '500',
   },
   contentContainer: {
@@ -207,13 +212,11 @@ const styles = StyleSheet.create({
   previewLine: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#495057',
     marginBottom: 4,
     fontStyle: 'italic',
   },
   moreText: {
     fontSize: 12,
-    color: '#6c757d',
     marginTop: 8,
     fontWeight: '500',
   },
@@ -223,7 +226,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#f8f9fa',
   },
   tagsContainer: {
     flexDirection: 'row',

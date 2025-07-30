@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, Dimensions, StyleSheet } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function AnimatedBackground({ children }) {
+  const { theme } = useTheme();
   const floatingAnimation1 = useRef(new Animated.Value(0)).current;
   const floatingAnimation2 = useRef(new Animated.Value(0)).current;
   const floatingAnimation3 = useRef(new Animated.Value(0)).current;
@@ -63,12 +65,32 @@ export default function AnimatedBackground({ children }) {
     outputRange: [0.3, 0.7, 0.3],
   });
 
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    gradientOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: height * 0.3,
+      backgroundColor: theme.primary + '08', // 8% opacity
+    },
+    floatingElement: {
+      position: 'absolute',
+      borderRadius: 50,
+      backgroundColor: theme.primary + '15', // 15% opacity
+    },
+  });
+
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       {/* Elementos flotantes decorativos */}
       <Animated.View
         style={[
-          styles.floatingElement,
+          dynamicStyles.floatingElement,
           styles.element1,
           {
             transform: [{ translateY: translateY1 }],
@@ -78,7 +100,7 @@ export default function AnimatedBackground({ children }) {
       />
       <Animated.View
         style={[
-          styles.floatingElement,
+          dynamicStyles.floatingElement,
           styles.element2,
           {
             transform: [{ translateY: translateY2 }],
@@ -88,7 +110,7 @@ export default function AnimatedBackground({ children }) {
       />
       <Animated.View
         style={[
-          styles.floatingElement,
+          dynamicStyles.floatingElement,
           styles.element3,
           {
             transform: [{ translateY: translateY3 }],
@@ -98,7 +120,7 @@ export default function AnimatedBackground({ children }) {
       />
       
       {/* Gradiente de fondo */}
-      <View style={styles.gradientOverlay} />
+      <View style={dynamicStyles.gradientOverlay} />
       
       {/* Contenido */}
       {children}
@@ -107,23 +129,6 @@ export default function AnimatedBackground({ children }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  gradientOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: height * 0.3,
-    backgroundColor: 'linear-gradient(180deg, rgba(0,123,255,0.05) 0%, rgba(248,249,250,0) 100%)',
-  },
-  floatingElement: {
-    position: 'absolute',
-    borderRadius: 50,
-    backgroundColor: 'rgba(0,123,255,0.1)',
-  },
   element1: {
     width: 60,
     height: 60,

@@ -12,6 +12,8 @@ import {
 import { FirestoreService } from '../utils/firestoreService';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import AnimatedBackground from '../components/AnimatedBackground';
+import PoemCard from '../components/PoemCard';
 
 const { width } = Dimensions.get('window');
 
@@ -84,18 +86,13 @@ export default function HomeScreen({ navigation }) {
     });
   };
 
-  const renderPoemItem = ({ item }) => (
-    <TouchableOpacity
-      style={dynamicStyles.poemCard}
+  const renderPoemItem = ({ item, index }) => (
+    <PoemCard
+      poem={item}
+      index={index}
       onPress={() => navigation.navigate('Detalle', { poem: item })}
       onLongPress={() => deletePoem(item.id)}
-    >
-      <Text style={dynamicStyles.poemTitle}>{item.title}</Text>
-      <Text style={dynamicStyles.poemPreview} numberOfLines={3}>
-        {item.content}
-      </Text>
-      <Text style={dynamicStyles.poemDate}>{formatDate(item.updatedAt)}</Text>
-    </TouchableOpacity>
+    />
   );
 
   const EmptyComponent = () => (
@@ -205,7 +202,7 @@ export default function HomeScreen({ navigation }) {
   });
 
   return (
-    <View style={dynamicStyles.container}>
+    <AnimatedBackground>
       <View style={dynamicStyles.header}>
         <View style={styles.headerContent}>
           <View>
@@ -250,7 +247,7 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
-    </View>
+    </AnimatedBackground>
   );
 }
 
