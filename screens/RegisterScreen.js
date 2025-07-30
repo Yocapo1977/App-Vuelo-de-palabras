@@ -12,6 +12,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { AuthService } from '../utils/authService';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -19,6 +20,7 @@ export default function RegisterScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
 
   const handleRegister = async () => {
     // Validaciones

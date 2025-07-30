@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import HomeScreen from './screens/HomeScreen';
 import EditorScreen from './screens/EditorScreen';
 import PoemDetailScreen from './screens/PoemDetailScreen';
@@ -15,11 +16,12 @@ const Stack = createStackNavigator();
 // Componente para manejar la navegación basada en autenticación
 function AppNavigator() {
   const { user, initializing } = useAuth();
+  const { theme } = useTheme();
 
   if (initializing) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007bff" />
+      <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -29,14 +31,15 @@ function AppNavigator() {
       <Stack.Navigator 
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: theme.surface,
             elevation: 1,
             shadowOpacity: 0.1,
           },
-          headerTintColor: '#2c3e50',
+          headerTintColor: theme.text,
           headerTitleStyle: {
             fontWeight: 'bold',
             fontSize: 18,
+            color: theme.text,
           },
           headerBackTitleVisible: false,
         }}
@@ -50,7 +53,7 @@ function AppNavigator() {
               options={{
                 title: 'Vuelo de Palabras',
                 headerStyle: {
-                  backgroundColor: '#fff',
+                  backgroundColor: theme.background,
                   elevation: 0,
                   shadowOpacity: 0,
                   borderBottomWidth: 0,
@@ -99,10 +102,11 @@ function AppNavigator() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <StatusBar style="dark" backgroundColor="#fff" />
-      <AppNavigator />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
@@ -111,6 +115,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
 });

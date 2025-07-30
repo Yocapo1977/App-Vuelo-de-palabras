@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { FirestoreService } from '../utils/firestoreService';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -18,6 +19,7 @@ export default function HomeScreen({ navigation }) {
   const [poems, setPoems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user, logout } = useAuth();
+  const { theme, toggleTheme, isDarkMode } = useTheme();
 
   useEffect(() => {
     if (!user) return;
@@ -84,46 +86,146 @@ export default function HomeScreen({ navigation }) {
 
   const renderPoemItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.poemCard}
+      style={dynamicStyles.poemCard}
       onPress={() => navigation.navigate('Detalle', { poem: item })}
       onLongPress={() => deletePoem(item.id)}
     >
-      <Text style={styles.poemTitle}>{item.title}</Text>
-      <Text style={styles.poemPreview} numberOfLines={3}>
+      <Text style={dynamicStyles.poemTitle}>{item.title}</Text>
+      <Text style={dynamicStyles.poemPreview} numberOfLines={3}>
         {item.content}
       </Text>
-      <Text style={styles.poemDate}>{formatDate(item.updatedAt)}</Text>
+      <Text style={dynamicStyles.poemDate}>{formatDate(item.updatedAt)}</Text>
     </TouchableOpacity>
   );
 
   const EmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyTitle}>✨ Vuelo de Palabras ✨</Text>
-      <Text style={styles.emptySubtitle}>
+      <Text style={dynamicStyles.emptyTitle}>✨ Vuelo de Palabras ✨</Text>
+      <Text style={dynamicStyles.emptySubtitle}>
         "La sonrisa es el perfecto abrazo del alma..."
       </Text>
-      <Text style={styles.emptyText}>
+      <Text style={dynamicStyles.emptyText}>
         Aún no tienes poemas guardados.{'\n'}
         ¡Toca el botón + para crear tu primer verso!
       </Text>
     </View>
   );
 
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      padding: 20,
+      paddingTop: 40,
+      backgroundColor: theme.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 4,
+    },
+    headerSubtitle: {
+      fontSize: 16,
+      color: theme.textSecondary,
+    },
+    poemCard: {
+      backgroundColor: theme.card,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+      elevation: 2,
+      shadowColor: theme.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    poemTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    poemPreview: {
+      fontSize: 14,
+      color: theme.textSecondary,
+      lineHeight: 20,
+      marginBottom: 12,
+    },
+    poemDate: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      textAlign: 'right',
+    },
+    fab: {
+      position: 'absolute',
+      right: 20,
+      bottom: 20,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: theme.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      elevation: 6,
+      shadowColor: theme.text,
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.3,
+      shadowRadius: 6,
+    },
+    emptyTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    emptySubtitle: {
+      fontSize: 16,
+      color: theme.textSecondary,
+      fontStyle: 'italic',
+      marginBottom: 24,
+      textAlign: 'center',
+    },
+    emptyText: {
+      fontSize: 16,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      lineHeight: 24,
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      color: theme.textSecondary,
+    },
+  });
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={dynamicStyles.container}>
+      <View style={dynamicStyles.header}>
         <View style={styles.headerContent}>
           <View>
-            <Text style={styles.headerTitle}>Mis Poemas</Text>
-            <Text style={styles.headerSubtitle}>
+            <Text style={dynamicStyles.headerTitle}>Mis Poemas</Text>
+            <Text style={dynamicStyles.headerSubtitle}>
               {poems.length} {poems.length === 1 ? 'poema' : 'poemas'}
             </Text>
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>Hola, {user?.displayName || 'Usuario'}</Text>
-            <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-              <Text style={styles.logoutText}>Cerrar sesión</Text>
-            </TouchableOpacity>
+            <Text style={[styles.userName, { color: theme.text }]}>
+              Hola, {user?.displayName || 'Usuario'}
+            </Text>
+            <View style={styles.userActions}>
+              <TouchableOpacity onPress={toggleTheme} style={[styles.themeButton, { backgroundColor: theme.surface }]}>
+                <Text style={styles.themeButtonText}>{isDarkMode ? '☀️' : '🌙'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                <Text style={styles.logoutText}>Cerrar sesión</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -134,8 +236,8 @@ export default function HomeScreen({ navigation }) {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={loading ? () => (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#007bff" />
-            <Text style={styles.loadingText}>Cargando tus poemas...</Text>
+            <ActivityIndicator size="large" color={theme.primary} />
+            <Text style={dynamicStyles.loadingText}>Cargando tus poemas...</Text>
           </View>
         ) : EmptyComponent}
         contentContainerStyle={poems.length === 0 ? styles.emptyList : styles.list}
@@ -143,7 +245,7 @@ export default function HomeScreen({ navigation }) {
       />
 
       <TouchableOpacity
-        style={styles.fab}
+        style={dynamicStyles.fab}
         onPress={() => navigation.navigate('Editar')}
       >
         <Text style={styles.fabText}>+</Text>
@@ -288,5 +390,22 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     color: '#6c757d',
+  },
+  userActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  themeButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  themeButtonText: {
+    fontSize: 16,
   },
 });

@@ -12,11 +12,13 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { AuthService } from '../utils/authService';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -58,44 +60,81 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      lineHeight: 22,
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontSize: 16,
+      backgroundColor: theme.surface,
+      color: theme.text,
+    },
+  });
+
   return (
     <KeyboardAvoidingView 
-      style={styles.container}
+      style={dynamicStyles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
-          <Text style={styles.title}>✨ Vuelo de Palabras</Text>
-          <Text style={styles.subtitle}>Inicia sesión para sincronizar tus poemas</Text>
+          <Text style={dynamicStyles.title}>✨ Vuelo de Palabras</Text>
+          <Text style={dynamicStyles.subtitle}>Inicia sesión para sincronizar tus poemas</Text>
         </View>
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="tu@email.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              editable={!loading}
-            />
-          </View>
+                  <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <Text style={dynamicStyles.label}>Email</Text>
+              <TextInput
+                style={dynamicStyles.input}
+                placeholder="tu@email.com"
+                placeholderTextColor={theme.textSecondary}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                editable={!loading}
+              />
+            </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Contraseña</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Tu contraseña"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoComplete="password"
-              editable={!loading}
-            />
-          </View>
+            <View style={styles.inputContainer}>
+              <Text style={dynamicStyles.label}>Contraseña</Text>
+              <TextInput
+                style={dynamicStyles.input}
+                placeholder="Tu contraseña"
+                placeholderTextColor={theme.textSecondary}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                autoComplete="password"
+                editable={!loading}
+              />
+            </View>
 
           <TouchableOpacity
             style={[styles.loginButton, loading && styles.buttonDisabled]}
