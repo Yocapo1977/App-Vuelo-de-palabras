@@ -12,6 +12,16 @@ http://172.30.0.2:8080/demo.html
 http://172.30.0.2:8080/social-app.html
 ```
 
+### 📚 **Versión Multi-Género (22 Géneros):**
+```
+http://172.30.0.2:8080/multi-genre-app.html
+```
+
+### 🎨 **Versión Avanzada (10 Géneros + Formato):**
+```
+http://172.30.0.2:8080/advanced-genre-app.html
+```
+
 ### 📄 **Página de Información:**
 ```
 http://172.30.0.2:8080/index.html
@@ -30,12 +40,16 @@ http://172.30.0.2:8080/test-mobile.html
 ```
 http://172.17.0.1:8080/demo.html
 http://172.17.0.1:8080/social-app.html
+http://172.17.0.1:8080/multi-genre-app.html
+http://172.17.0.1:8080/advanced-genre-app.html
 ```
 
 ### Opción 2:
 ```
 http://localhost:8080/demo.html
 http://localhost:8080/social-app.html
+http://localhost:8080/multi-genre-app.html
+http://localhost:8080/advanced-genre-app.html
 ```
 
 ---
@@ -66,15 +80,19 @@ http://localhost:8080/index.html
 
 ## 📋 **Comparación de Versiones:**
 
-| Versión | URL | Características |
-|---------|-----|-----------------|
-| **Básica** | `/demo.html` | Crear, editar, eliminar poemas |
-| **Social** | `/social-app.html` | + Usuarios, amigos, feed, likes, comentarios |
+| Versión | URL | Géneros | Usuarios | Social | Formato | Características |
+|---------|-----|---------|----------|--------|---------|-----------------|
+| **Básica** | `/demo.html` | Solo Poemas | ❌ | ❌ | Básico | Crear, editar, eliminar |
+| **Social** | `/social-app.html` | Solo Poemas | ✅ | ✅ | Básico | + Usuarios, amigos, feed |
+| **Multi-Género** | `/multi-genre-app.html` | 22 Géneros | ❌ | ❌ | Básico | + 22 géneros literarios |
+| **Avanzada** | `/advanced-genre-app.html` | 10 Géneros | ❌ | ❌ | **Avanzado** | + Editor WYSIWYG, formato específico |
 
 ### 🎯 **¿Cuál elegir?**
 
 - **📱 Para uso personal:** Usa la versión básica (`demo.html`)
 - **🌐 Para conectar con otros:** Usa la versión social (`social-app.html`)
+- **📚 Para explorar géneros:** Usa la versión multi-género (`multi-genre-app.html`)
+- **🎨 Para formato avanzado:** Usa la versión avanzada (`advanced-genre-app.html`)
 
 ---
 
@@ -97,9 +115,29 @@ http://localhost:8080/index.html
 - ✅ **Estadísticas avanzadas**
 - ✅ **Notificaciones**
 
+### 📚 **Versión Multi-Género (`multi-genre-app.html`):**
+- ✅ **22 géneros literarios** diferentes
+- ✅ **Consejos específicos** por género
+- ✅ **Editor inteligente** con tips
+- ✅ **Biblioteca organizada** por género
+- ✅ **Estadísticas detalladas** por género
+- ✅ **Sistema de etiquetas**
+- ✅ **Filtros avanzados**
+- ✅ **Género personalizado**
+
+### 🎨 **Versión Avanzada (`advanced-genre-app.html`):**
+- ✅ **10 géneros con formato específico**
+- ✅ **Editor WYSIWYG** profesional
+- ✅ **5 fuentes diferentes** (Arial, Times, Georgia, Courier, Verdana)
+- ✅ **6 tamaños de letra** (12px a 24px)
+- ✅ **Formato completo:** Negrita, Cursiva, Subrayado
+- ✅ **Alineación:** Izquierda, Centro, Derecha
+- ✅ **Controles específicos** por género (capítulos, estructura haiku, etc.)
+- ✅ **Formato automático** según el género seleccionado
+
 ---
 
-## 🎨 **Pantallas Disponibles en la Versión Social:**
+## 🎨 **Pantallas Disponibles por Versión:**
 
 ### 🏠 **Inicio**
 - Bienvenida y guía de uso
@@ -152,15 +190,28 @@ http://localhost:8080/index.html
 
 ---
 
-## 🎯 **Recomendación:**
+## 🎯 **Recomendaciones por Tipo de Usuario:**
 
-**Para la mejor experiencia, usa la versión social:**
+### 📱 **Para principiantes:**
+```
+http://172.30.0.2:8080/demo.html
+```
+
+### 🌐 **Para comunidad:**
 ```
 http://172.30.0.2:8080/social-app.html
 ```
 
-Esta versión incluye todas las funcionalidades de la versión básica más las características sociales para conectar con otros poetas.
+### 📚 **Para escritores experimentados:**
+```
+http://172.30.0.2:8080/multi-genre-app.html
+```
+
+### 🎨 **Para formato profesional:**
+```
+http://172.30.0.2:8080/advanced-genre-app.html
+```
 
 ---
 
-¡Disfruta escribiendo poemas y conectando con otros poetas! 📱🌐✍️✨
+¡Elige la versión que mejor se adapte a tus necesidades y comienza a escribir! 📱🌐📚🎨✨

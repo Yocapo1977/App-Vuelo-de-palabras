@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vuelo de Palabras - Géneros Avanzados</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #2d3436; }
+        .header { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 20px; text-align: center; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .screen { background: white; border-radius: 15px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; }
+        .screen.active { display: block; }
+        .nav { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { background: #6c5ce7; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+        .nav-btn:hover { background: #5a4fcf; }
+        .nav-btn.active { background: #a29bfe; }
+        .genre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin: 20px 0; }
+        .genre-card { background: #f8f9fa; border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .genre-card:hover { transform: translateY(-3px); border-color: #6c5ce7; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2); }
+        .genre-icon { font-size: 32px; margin-bottom: 10px; }
+        .genre-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+        .genre-description { font-size: 14px; color: #636e72; line-height: 1.4; }
+        .genre-features { font-size: 12px; color: #6c5ce7; margin-top: 10px; font-style: italic; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #e8e8e8; border-radius: 8px; font-size: 16px; }
+        .form-group textarea { min-height: 200px; resize: vertical; }
+        .formatting-toolbar { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .format-btn { background: white; border: 1px solid #e8e8e8; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .format-btn:hover { background: #6c5ce7; color: white; }
+        .format-btn.active { background: #6c5ce7; color: white; }
+        .font-selector { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
+        .font-selector select { padding: 8px; border-radius: 4px; border: 1px solid #e8e8e8; }
+        .btn { background: #6c5ce7; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 5px; transition: all 0.3s; }
+        .btn:hover { background: #5a4fcf; }
+        .btn-secondary { background: #636e72; }
+        .btn-success { background: #00b894; }
+        .btn-danger { background: #e74c3c; }
+        .piece-card { background: #f8f9fa; border-radius: 10px; padding: 15px; margin: 10px 0; cursor: pointer; transition: transform 0.2s; }
+        .piece-card:hover { transform: translateY(-2px); }
+        .piece-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .piece-genre { background: #6c5ce7; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .piece-title { font-weight: bold; margin-bottom: 5px; }
+        .piece-preview { color: #636e72; font-size: 14px; }
+        .piece-date { font-size: 12px; color: #b2bec3; margin-top: 5px; }
+        .chapter-section { background: #f8f9fa; border-radius: 8px; padding: 15px; margin: 10px 0; }
+        .chapter-title { font-weight: bold; margin-bottom: 10px; color: #6c5ce7; }
+        .haiku-container { text-align: center; font-family: 'Georgia', serif; line-height: 2; }
+        .haiku-line { margin: 10px 0; font-size: 18px; }
+        .sonnet-container { font-family: 'Times New Roman', serif; line-height: 1.8; }
+        .sonnet-quatrain { margin: 15px 0; }
+        .sonnet-couplet { margin: 15px 0; font-style: italic; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-item { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #6c5ce7; }
+        .stat-label { font-size: 12px; color: #636e72; text-transform: uppercase; }
+        .empty-state { text-align: center; padding: 40px; color: #636e72; }
+        .empty-state .icon { font-size: 60px; margin-bottom: 20px; }
+        .notification { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin: 15px 0; color: #856404; }
+        .notification.success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .notification.error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .genre-stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
+        .genre-stat { background: #e8e8e8; padding: 8px 12px; border-radius: 20px; font-size: 12px; color: #636e72; }
+        .genre-stat.active { background: #6c5ce7; color: white; }
+        .tips-container { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin: 15px 0; }
+        .tips-title { font-weight: bold; color: #856404; margin-bottom: 10px; }
+        .tips-list { color: #856404; padding-left: 20px; }
+        .tips-list li { margin-bottom: 5px; }
+        .editor-container { border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; }
+        .editor-content { padding: 15px; min-height: 300px; outline: none; font-size: 16px; line-height: 1.6; }
+        .editor-content:focus { background: #fafafa; }
+        .chapter-controls { display: flex; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
+        .chapter-input { flex: 1; min-width: 200px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✈️ Vuelo de Palabras - Géneros Avanzados</h1>
+        <p>Formato específico para cada género literario</p>
+    </div>
+
+    <div class="container">
+        <div class="nav">
+            <button class="nav-btn active" onclick="showScreen('home')">🏠 Inicio</button>
+            <button class="nav-btn" onclick="showScreen('genres')">📚 Géneros</button>
+            <button class="nav-btn" onclick="showScreen('writer')">✍️ Escribir</button>
+            <button class="nav-btn" onclick="showScreen('library')">📖 Biblioteca</button>
+            <button class="nav-btn" onclick="showScreen('stats')">📊 Estadísticas</button>
+        </div>
+
+        <!-- Pantalla de Inicio -->
+        <div id="home" class="screen active">
+            <h2>🏠 Mi Biblioteca Literaria Avanzada</h2>
+            <div id="home-content">
+                <div class="empty-state">
+                    <div class="icon">📚</div>
+                    <h3>¡Bienvenido a Vuelo de Palabras Avanzado!</h3>
+                    <p>Cada género tiene su formato y características específicas</p>
+                    <button class="btn" onclick="showScreen('genres')">📚 Explorar Géneros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Géneros -->
+        <div id="genres" class="screen">
+            <h2>📚 Géneros Literarios Avanzados</h2>
+            <p>Selecciona un género para comenzar a escribir con formato específico</p>
+            <div class="genre-grid" id="genres-grid"></div>
+        </div>
+
+        <!-- Pantalla del Escritor -->
+        <div id="writer" class="screen">
+            <h2>✍️ Escribir con Formato Específico</h2>
+            <form id="piece-form">
+                <div class="form-group">
+                    <label for="piece-genre">Género literario</label>
+                    <select id="piece-genre" onchange="updateGenreFormat()">
+                        <option value="">Selecciona un género...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="piece-title">Título</label>
+                    <input type="text" id="piece-title" placeholder="Escribe el título..." maxlength="100">
+                </div>
+
+                <!-- Controles de formato -->
+                <div class="formatting-toolbar" id="formatting-toolbar" style="display: none;">
+                    <div class="font-selector">
+                        <label>Fuente:</label>
+                        <select id="font-family" onchange="applyFormat()">
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Times New Roman', serif">Times New Roman</option>
+                            <option value="Georgia, serif">Georgia</option>
+                            <option value="'Courier New', monospace">Courier New</option>
+                            <option value="Verdana, sans-serif">Verdana</option>
+                        </select>
+                        
+                        <label>Tamaño:</label>
+                        <select id="font-size" onchange="applyFormat()">
+                            <option value="12px">12px</option>
+                            <option value="14px">14px</option>
+                            <option value="16px" selected>16px</option>
+                            <option value="18px">18px</option>
+                            <option value="20px">20px</option>
+                            <option value="24px">24px</option>
+                        </select>
+                    </div>
+                    
+                    <button type="button" class="format-btn" onclick="toggleFormat('bold')" id="bold-btn">B</button>
+                    <button type="button" class="format-btn" onclick="toggleFormat('italic')" id="italic-btn">I</button>
+                    <button type="button" class="format-btn" onclick="toggleFormat('underline')" id="underline-btn">U</button>
+                    <button type="button" class="format-btn" onclick="alignText('left')" id="align-left">⫷</button>
+                    <button type="button" class="format-btn" onclick="alignText('center')" id="align-center">⫸</button>
+                    <button type="button" class="format-btn" onclick="alignText('right')" id="align-right">⫹</button>
+                </div>
+
+                <!-- Contenedor del editor -->
+                <div class="editor-container">
+                    <div class="editor-content" id="editor-content" contenteditable="true" 
+                         placeholder="Escribe tu obra aquí..."></div>
+                </div>
+
+                <!-- Controles específicos por género -->
+                <div id="genre-specific-controls" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label for="piece-tags">Etiquetas (opcional)</label>
+                    <input type="text" id="piece-tags" placeholder="palabra1, palabra2, palabra3..." maxlength="200">
+                </div>
+                
+                <div id="genre-tips" class="tips-container" style="display: none;">
+                    <div class="tips-title">💡 Características específicas de este género:</div>
+                    <ul class="tips-list" id="tips-list"></ul>
+                </div>
+                
+                <button type="submit" class="btn">💾 Guardar Obra</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">🗑️ Limpiar</button>
+            </form>
+        </div>
+
+        <!-- Pantalla de Biblioteca -->
+        <div id="library" class="screen">
+            <h2>📖 Mi Biblioteca</h2>
+            <div class="genre-stats" id="genre-filters"></div>
+            <div id="library-content"></div>
+        </div>
+
+        <!-- Pantalla de Estadísticas -->
+        <div id="stats" class="screen">
+            <h2>📊 Mis Estadísticas</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-pieces">0</div>
+                    <div class="stat-label">Obras Totales</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="genres-used">0</div>
+                    <div class="stat-label">Géneros Usados</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="total-words">0</div>
+                    <div class="stat-label">Palabras Escritas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="favorite-genre">-</div>
+                    <div class="stat-label">Género Favorito</div>
+                </div>
+            </div>
+            <h3>📈 Distribución por Géneros</h3>
+            <div id="genre-distribution"></div>
+        </div>
+    </div>
+
+    <script>
+        // Definición de géneros con características específicas
+        const genres = [
+            {
+                id: 'poema',
+                name: 'Poema',
+                icon: '📝',
+                description: 'Expresión poética tradicional con versos y estrofas',
+                features: 'Métrica, rimas, estrofas',
+                defaultFont: 'Georgia, serif',
+                defaultSize: '18px',
+                tips: [
+                    'Usa metáforas y símiles para crear imágenes',
+                    'Juega con el ritmo y la musicalidad',
+                    'Considera la estructura y las rimas',
+                    'Expresa emociones de manera directa'
+                ],
+                specificControls: null
+            },
+            {
+                id: 'haiku',
+                name: 'Haiku',
+                icon: '🌸',
+                description: 'Poesía japonesa de 3 versos (5-7-5 sílabas)',
+                features: 'Estructura 5-7-5, naturaleza',
+                defaultFont: 'Georgia, serif',
+                defaultSize: '20px',
+                tips: [
+                    'Sigue la estructura 5-7-5 sílabas',
+                    'Incluye una referencia a la naturaleza',
+                    'Captura un momento específico',
+                    'Usa palabras simples y directas'
+                ],
+                specificControls: 'haiku'
+            },
+            {
+                id: 'soneto',
+                name: 'Soneto',
+                icon: '🎭',
+                description: 'Poema de 14 versos con estructura específica',
+                features: 'ABBA ABBA CDC DCD',
+                defaultFont: 'Times New Roman, serif',
+                defaultSize: '18px',
+                tips: [
+                    'Usa la estructura ABBA ABBA CDC DCD',
+                    'Los primeros 8 versos presentan el tema',
+                    'Los últimos 6 versos resuelven o concluyen',
+                    'Mantén un tono formal y elegante'
+                ],
+                specificControls: 'sonnet'
+            },
+            {
+                id: 'cuento-corto',
+                name: 'Cuento Corto',
+                icon: '📖',
+                description: 'Narrativa breve con trama completa',
+                features: 'Capítulos, personajes, trama',
+                defaultFont: 'Arial, sans-serif',
+                defaultSize: '16px',
+                tips: [
+                    'Enfócate en un solo conflicto',
+                    'Usa pocos personajes',
+                    'Crea un final impactante',
+                    'Mantén la tensión narrativa'
+                ],
+                specificControls: 'chapters'
+            },
+            {
+                id: 'novela',
+                name: 'Novela',
+                icon: '📚',
+                description: 'Narrativa extensa con múltiples capítulos',
+                features: 'Capítulos, personajes, desarrollo',
+                defaultFont: 'Arial, sans-serif',
+                defaultSize: '16px',
+                tips: [
+                    'Desarrolla personajes complejos',
+                    'Crea múltiples líneas argumentales',
+                    'Usa capítulos para organizar',
+                    'Mantén la coherencia narrativa'
+                ],
+                specificControls: 'chapters'
+            },
+            {
+                id: 'ensayo',
+                name: 'Ensayo',
+                icon: '💭',
+                description: 'Texto argumentativo con estructura formal',
+                features: 'Introducción, desarrollo, conclusión',
+                defaultFont: 'Times New Roman, serif',
+                defaultSize: '16px',
+                tips: [
+                    'Presenta una tesis clara',
+                    'Desarrolla argumentos sólidos',
+                    'Incluye ejemplos relevantes',
+                    'Concluye de manera impactante'
+                ],
+                specificControls: 'sections'
+            },
+            {
+                id: 'articulo',
+                name: 'Artículo',
+                icon: '📰',
+                description: 'Texto informativo o de opinión',
+                features: 'Título, subtítulos, párrafos',
+                defaultFont: 'Arial, sans-serif',
+                defaultSize: '16px',
+                tips: [
+                    'Escribe un título atractivo',
+                    'Usa subtítulos para organizar',
+                    'Incluye citas y referencias',
+                    'Mantén un tono objetivo'
+                ],
+                specificControls: 'sections'
+            },
+            {
+                id: 'guion',
+                name: 'Guión',
+                icon: '🎬',
+                description: 'Texto para teatro, cine o televisión',
+                features: 'Diálogos, acotaciones, escenas',
+                defaultFont: 'Courier New, monospace',
+                defaultSize: '14px',
+                tips: [
+                    'Usa formato de guión estándar',
+                    'Incluye acotaciones escénicas',
+                    'Desarrolla diálogos naturales',
+                    'Organiza por escenas'
+                ],
+                specificControls: 'script'
+            },
+            {
+                id: 'diario',
+                name: 'Diario',
+                icon: '📔',
+                description: 'Reflexión personal del día a día',
+                features: 'Fechas, entradas, reflexiones',
+                defaultFont: 'Georgia, serif',
+                defaultSize: '16px',
+                tips: [
+                    'Escribe en primera persona',
+                    'Sé honesto con tus emociones',
+                    'Incluye detalles del día',
+                    'Reflexiona sobre tus experiencias'
+                ],
+                specificControls: 'diary'
+            },
+            {
+                id: 'carta',
+                name: 'Carta',
+                icon: '✉️',
+                description: 'Comunicación escrita dirigida a alguien',
+                features: 'Saludo, cuerpo, despedida',
+                defaultFont: 'Times New Roman, serif',
+                defaultSize: '16px',
+                tips: [
+                    'Define claramente el destinatario',
+                    'Usa un tono apropiado',
+                    'Incluye detalles personales',
+                    'Cierra de manera significativa'
+                ],
+                specificControls: 'letter'
+            }
+        ];
+
+        // Datos de la aplicación
+        let pieces = JSON.parse(localStorage.getItem('advancedGenrePieces') || '[]');
+        let currentGenre = null;
+        let currentFormat = {
+            bold: false,
+            italic: false,
+            underline: false,
+            align: 'left',
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '16px'
+        };
+
+        // Cargar géneros en la pantalla
+        function loadGenres() {
+            const genresGrid = document.getElementById('genres-grid');
+            genresGrid.innerHTML = genres.map(genre => `
+                <div class="genre-card" onclick="selectGenre('${genre.id}')">
+                    <div class="genre-icon">${genre.icon}</div>
+                    <div class="genre-title">${genre.name}</div>
+                    <div class="genre-description">${genre.description}</div>
+                    <div class="genre-features">🎨 ${genre.features}</div>
+                </div>
+            `).join('');
+        }
+
+        // Seleccionar género
+        function selectGenre(genreId) {
+            currentGenre = genres.find(g => g.id === genreId);
+            showScreen('writer');
+            document.getElementById('piece-genre').value = genreId;
+            updateGenreFormat();
+        }
+
+        // Actualizar formato según género
+        function updateGenreFormat() {
+            const genreId = document.getElementById('piece-genre').value;
+            const tipsContainer = document.getElementById('genre-tips');
+            const tipsList = document.getElementById('tips-list');
+            const formattingToolbar = document.getElementById('formatting-toolbar');
+            const genreSpecificControls = document.getElementById('genre-specific-controls');
+            
+            if (genreId) {
+                const genre = genres.find(g => g.id === genreId);
+                if (genre) {
+                    // Mostrar barra de herramientas
+                    formattingToolbar.style.display = 'block';
+                    
+                    // Configurar formato por defecto
+                    document.getElementById('font-family').value = genre.defaultFont;
+                    document.getElementById('font-size').value = genre.defaultSize;
+                    
+                    // Aplicar formato al editor
+                    const editor = document.getElementById('editor-content');
+                    editor.style.fontFamily = genre.defaultFont;
+                    editor.style.fontSize = genre.defaultSize;
+                    
+                    // Mostrar consejos
+                    tipsList.innerHTML = genre.tips.map(tip => `<li>${tip}</li>`).join('');
+                    tipsContainer.style.display = 'block';
+                    
+                    // Cargar controles específicos
+                    loadSpecificControls(genre);
+                }
+            } else {
+                formattingToolbar.style.display = 'none';
+                tipsContainer.style.display = 'none';
+                genreSpecificControls.style.display = 'none';
+            }
+        }
+
+        // Cargar controles específicos por género
+        function loadSpecificControls(genre) {
+            const controlsContainer = document.getElementById('genre-specific-controls');
+            
+            switch(genre.specificControls) {
+                case 'chapters':
+                    controlsContainer.innerHTML = `
+                        <div class="chapter-controls">
+                            <input type="text" class="chapter-input" id="chapter-title" placeholder="Título del capítulo">
+                            <button type="button" class="btn" onclick="addChapter()">➕ Agregar Capítulo</button>
+                            <button type="button" class="btn btn-secondary" onclick="insertChapterBreak()">📄 Separador</button>
+                        </div>
+                    `;
+                    controlsContainer.style.display = 'block';
+                    break;
+                    
+                case 'haiku':
+                    controlsContainer.innerHTML = `
+                        <div class="tips-container">
+                            <div class="tips-title">🌸 Estructura Haiku:</div>
+                            <div style="text-align: center; font-family: Georgia, serif; line-height: 2;">
+                                <div>Primera línea (5 sílabas)</div>
+                                <div>Segunda línea (7 sílabas)</div>
+                                <div>Tercera línea (5 sílabas)</div>
+                            </div>
+                        </div>
+                    `;
+                    controlsContainer.style.display = 'block';
+                    break;
+                    
+                case 'sonnet':
+                    controlsContainer.innerHTML = `
+                        <div class="tips-container">
+                            <div class="tips-title">🎭 Estructura Soneto:</div>
+                            <div style="font-family: Times New Roman, serif;">
+                                <div>Cuartetos: ABBA ABBA</div>
+                                <div>Tercetos: CDC DCD</div>
+                                <div>Total: 14 versos</div>
+                            </div>
+                        </div>
+                    `;
+                    controlsContainer.style.display = 'block';
+                    break;
+                    
+                case 'script':
+                    controlsContainer.innerHTML = `
+                        <div class="tips-container">
+                            <div class="tips-title">🎬 Formato Guión:</div>
+                            <div style="font-family: Courier New, monospace;">
+                                <div>PERSONAJE: (acción) Diálogo</div>
+                                <div>ACOTACIÓN: Descripción de la escena</div>
+                            </div>
+                        </div>
+                    `;
+                    controlsContainer.style.display = 'block';
+                    break;
+                    
+                case 'letter':
+                    controlsContainer.innerHTML = `
+                        <div class="tips-container">
+                            <div class="tips-title">✉️ Estructura Carta:</div>
+                            <div>
+                                <div>Fecha</div>
+                                <div>Saludo</div>
+                                <div>Cuerpo</div>
+                                <div>Despedida</div>
+                                <div>Firma</div>
+                            </div>
+                        </div>
+                    `;
+                    controlsContainer.style.display = 'block';
+                    break;
+                    
+                default:
+                    controlsContainer.style.display = 'none';
+            }
+        }
+
+        // Funciones de formato
+        function toggleFormat(format) {
+            const btn = document.getElementById(format + '-btn');
+            currentFormat[format] = !currentFormat[format];
+            btn.classList.toggle('active', currentFormat[format]);
+            applyFormat();
+        }
+
+        function alignText(alignment) {
+            currentFormat.align = alignment;
+            document.querySelectorAll('[id^="align-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('align-' + alignment).classList.add('active');
+            applyFormat();
+        }
+
+        function applyFormat() {
+            const editor = document.getElementById('editor-content');
+            const selection = window.getSelection();
+            
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const span = document.createElement('span');
+                
+                span.style.fontWeight = currentFormat.bold ? 'bold' : 'normal';
+                span.style.fontStyle = currentFormat.italic ? 'italic' : 'normal';
+                span.style.textDecoration = currentFormat.underline ? 'underline' : 'none';
+                span.style.textAlign = currentFormat.align;
+                span.style.fontFamily = document.getElementById('font-family').value;
+                span.style.fontSize = document.getElementById('font-size').value;
+                
+                range.surroundContents(span);
+            }
+        }
+
+        // Funciones específicas por género
+        function addChapter() {
+            const chapterTitle = document.getElementById('chapter-title').value;
+            if (chapterTitle.trim()) {
+                const editor = document.getElementById('editor-content');
+                const chapterDiv = document.createElement('div');
+                chapterDiv.className = 'chapter-section';
+                chapterDiv.innerHTML = `
+                    <div class="chapter-title">📖 ${chapterTitle}</div>
+                    <div contenteditable="true" style="min-height: 100px; padding: 10px; background: white; border-radius: 4px; margin-top: 10px;"></div>
+                `;
+                editor.appendChild(chapterDiv);
+                document.getElementById('chapter-title').value = '';
+            }
+        }
+
+        function insertChapterBreak() {
+            const editor = document.getElementById('editor-content');
+            const breakDiv = document.createElement('div');
+            breakDiv.innerHTML = '<hr style="border: 2px solid #6c5ce7; margin: 20px 0;">';
+            editor.appendChild(breakDiv);
+        }
+
+        // Cargar géneros en el selector
+        function loadGenreOptions() {
+            const select = document.getElementById('piece-genre');
+            select.innerHTML = '<option value="">Selecciona un género...</option>' +
+                genres.map(genre => `<option value="${genre.id}">${genre.icon} ${genre.name}</option>`).join('');
+        }
+
+        // Cargar biblioteca
+        function loadLibrary() {
+            const libraryContent = document.getElementById('library-content');
+            const genreFilters = document.getElementById('genre-filters');
+            
+            // Crear filtros
+            const usedGenres = [...new Set(pieces.map(p => p.genre))];
+            genreFilters.innerHTML = `
+                <div class="genre-stat active" onclick="filterByGenre('all')">Todos (${pieces.length})</div>
+                ${usedGenres.map(genre => {
+                    const count = pieces.filter(p => p.genre === genre).length;
+                    const genreName = genres.find(g => g.id === genre)?.name || genre;
+                    return `<div class="genre-stat" onclick="filterByGenre('${genre}')">${genreName} (${count})</div>`;
+                }).join('')}
+            `;
+            
+            // Mostrar todas las obras
+            displayPieces(pieces);
+        }
+
+        // Filtrar por género
+        function filterByGenre(genreId) {
+            const filteredPieces = genreId === 'all' ? pieces : pieces.filter(p => p.genre === genreId);
+            displayPieces(filteredPieces);
+            
+            // Actualizar filtros activos
+            document.querySelectorAll('.genre-stat').forEach(stat => stat.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Mostrar obras
+        function displayPieces(piecesToShow) {
+            const libraryContent = document.getElementById('library-content');
+            
+            if (piecesToShow.length === 0) {
+                libraryContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📚</div>
+                        <h3>No hay obras guardadas</h3>
+                        <p>Comienza a escribir en diferentes géneros</p>
+                        <button class="btn" onclick="showScreen('genres')">📚 Explorar Géneros</button>
+                    </div>
+                `;
+            } else {
+                libraryContent.innerHTML = piecesToShow.map(piece => {
+                    const genre = genres.find(g => g.id === piece.genre);
+                    return `
+                        <div class="piece-card" onclick="viewPiece('${piece.id}')">
+                            <div class="piece-header">
+                                <div class="piece-genre">${genre?.icon || '📝'} ${genre?.name || piece.genre}</div>
+                                <div class="piece-date">${new Date(piece.createdAt).toLocaleDateString('es-ES')}</div>
+                            </div>
+                            <div class="piece-title">${piece.title}</div>
+                            <div class="piece-preview">${piece.content.substring(0, 150)}${piece.content.length > 150 ? '...' : ''}</div>
+                            ${piece.tags ? `<div class="piece-tags">🏷️ ${piece.tags}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Cargar estadísticas
+        function loadStats() {
+            const totalPieces = pieces.length;
+            const genresUsed = new Set(pieces.map(p => p.genre)).size;
+            const totalWords = pieces.reduce((total, piece) => total + piece.content.split(' ').length, 0);
+            
+            // Género favorito
+            const genreCounts = {};
+            pieces.forEach(piece => {
+                genreCounts[piece.genre] = (genreCounts[piece.genre] || 0) + 1;
+            });
+            const favoriteGenre = Object.keys(genreCounts).length > 0 ? 
+                Object.keys(genreCounts).reduce((a, b) => genreCounts[a] > genreCounts[b] ? a : b) : '-';
+            
+            document.getElementById('total-pieces').textContent = totalPieces;
+            document.getElementById('genres-used').textContent = genresUsed;
+            document.getElementById('total-words').textContent = totalWords;
+            document.getElementById('favorite-genre').textContent = genres.find(g => g.id === favoriteGenre)?.name || favoriteGenre;
+            
+            // Distribución por géneros
+            const distribution = document.getElementById('genre-distribution');
+            if (pieces.length > 0) {
+                const genreStats = Object.entries(genreCounts).map(([genreId, count]) => {
+                    const genre = genres.find(g => g.id === genreId);
+                    const percentage = Math.round((count / totalPieces) * 100);
+                    return `
+                        <div class="stat-item">
+                            <div class="stat-number">${count}</div>
+                            <div class="stat-label">${genre?.name || genreId}</div>
+                            <div style="font-size: 12px; color: #6c5ce7;">${percentage}%</div>
+                        </div>
+                    `;
+                }).join('');
+                distribution.innerHTML = genreStats;
+            } else {
+                distribution.innerHTML = '<p>No hay obras para mostrar estadísticas</p>';
+            }
+        }
+
+        // Funciones de navegación
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            document.getElementById(screenId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Cargar contenido específico
+            if (screenId === 'genres') {
+                loadGenres();
+            } else if (screenId === 'library') {
+                loadLibrary();
+            } else if (screenId === 'stats') {
+                loadStats();
+            }
+        }
+
+        // Guardar obra
+        document.getElementById('piece-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const genre = document.getElementById('piece-genre').value;
+            const title = document.getElementById('piece-title').value.trim();
+            const content = document.getElementById('editor-content').innerHTML;
+            const tags = document.getElementById('piece-tags').value.trim();
+            
+            if (!genre || !title || !content) {
+                showNotification('Por favor completa el género, título y contenido', 'error');
+                return;
+            }
+            
+            const newPiece = {
+                id: 'piece_' + Date.now(),
+                genre,
+                title,
+                content,
+                tags: tags || null,
+                createdAt: new Date().toISOString(),
+                format: currentFormat
+            };
+            
+            pieces.push(newPiece);
+            localStorage.setItem('advancedGenrePieces', JSON.stringify(pieces));
+            
+            showNotification('¡Obra guardada correctamente!', 'success');
+            clearForm();
+            showScreen('library');
+        });
+
+        function clearForm() {
+            document.getElementById('piece-genre').value = '';
+            document.getElementById('piece-title').value = '';
+            document.getElementById('editor-content').innerHTML = '';
+            document.getElementById('piece-tags').value = '';
+            document.getElementById('formatting-toolbar').style.display = 'none';
+            document.getElementById('genre-tips').style.display = 'none';
+            document.getElementById('genre-specific-controls').style.display = 'none';
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Inicializar aplicación
+        loadGenreOptions();
+        loadGenres();
+    </script>
+</body>
+</html>
