@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vuelo de Palabras - Prueba</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #6c5ce7;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #636e72;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success {
+            color: #00b894;
+            font-weight: bold;
+        }
+        .info {
+            color: #636e72;
+            font-size: 14px;
+        }
+        .button {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background: #5a4fcf;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✈️ Vuelo de Palabras</h1>
+        <p class="subtitle">Donde los versos cobran vida</p>
+        
+        <div class="status">
+            <p class="success">✅ Aplicación configurada correctamente</p>
+            <p class="info">React Native + Expo + React Navigation</p>
+        </div>
+        
+        <div class="status">
+            <h3>📱 Funcionalidades implementadas:</h3>
+            <ul style="text-align: left; color: #636e72;">
+                <li>Pantalla principal con lista de poemas</li>
+                <li>Editor de poemas con consejos</li>
+                <li>Vista detallada con estadísticas</li>
+                <li>Guardado local con localStorage</li>
+                <li>Compartir poemas</li>
+                <li>Diseño responsivo y moderno</li>
+            </ul>
+        </div>
+        
+        <div class="status">
+            <h3>🚀 Para probar la aplicación:</h3>
+            <p class="info">
+                1. Ejecuta: <code>npx expo start --web</code><br>
+                2. Abre: <a href="http://localhost:19006" target="_blank">http://localhost:19006</a><br>
+                3. ¡Comienza a escribir poemas!
+            </p>
+        </div>
+        
+        <a href="http://localhost:19006" class="button" target="_blank">
+            🚀 Abrir Aplicación
+        </a>
+    </div>
+</body>
+</html>
