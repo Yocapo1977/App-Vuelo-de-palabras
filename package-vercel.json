@@ -1,0 +1,27 @@
+{
+  "name": "vuelo-de-palabras-web",
+  "version": "1.0.0",
+  "description": "Aplicación web de escritura literaria con múltiples géneros y formato avanzado",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve . -p 3000",
+    "build": "echo 'No build step required for static HTML'",
+    "dev": "npx serve . -p 3000"
+  },
+  "keywords": [
+    "escritura",
+    "literatura",
+    "poemas",
+    "géneros",
+    "editor",
+    "formato"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

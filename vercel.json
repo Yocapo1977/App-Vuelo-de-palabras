@@ -1,0 +1,66 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/demo",
+      "dest": "/demo.html"
+    },
+    {
+      "src": "/social",
+      "dest": "/social-app.html"
+    },
+    {
+      "src": "/multi-genre",
+      "dest": "/multi-genre-app.html"
+    },
+    {
+      "src": "/advanced",
+      "dest": "/advanced-genre-app.html"
+    },
+    {
+      "src": "/visual",
+      "dest": "/visual-demo.html"
+    },
+    {
+      "src": "/screenshots",
+      "dest": "/screenshots-demo.html"
+    },
+    {
+      "src": "/test",
+      "dest": "/test-mobile.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}
