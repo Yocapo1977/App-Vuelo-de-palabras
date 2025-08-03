@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vuelo de Palabras - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            background: #5a4fcf;
+        }
+
+        .nav-btn.active {
+            background: #a29bfe;
+        }
+
+        .poem-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .poem-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .poem-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .poem-preview {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .poem-date {
+            color: #b2bec3;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #5a4fcf;
+        }
+
+        .btn-secondary {
+            background: #636e72;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #636e72;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+        }
+
+        .empty-state .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #6c5ce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        .tips {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .tips h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .tips ul {
+            color: #856404;
+            padding-left: 20px;
+        }
+
+        .tips li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✈️ Vuelo de Palabras</h1>
+        <p>Donde los versos cobran vida</p>
+    </div>
+
+    <div class="container">
+        <div class="nav">
+            <button class="nav-btn active" onclick="showScreen('home')">🏠 Inicio</button>
+            <button class="nav-btn" onclick="showScreen('editor')">✍️ Editor</button>
+            <button class="nav-btn" onclick="showScreen('detail')">📖 Detalle</button>
+        </div>
+
+        <!-- Pantalla de Inicio -->
+        <div id="home" class="screen active">
+            <h2>Mis Poemarios</h2>
+            <div id="poems-list">
+                <!-- Los poemas se cargarán aquí -->
+            </div>
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="icon">📝</div>
+                <h3>No hay poemas aún</h3>
+                <p>Comienza a escribir tu primer poema tocando el botón de abajo</p>
+            </div>
+        </div>
+
+        <!-- Pantalla del Editor -->
+        <div id="editor" class="screen">
+            <h2>Nuevo Poema</h2>
+            <form id="poem-form">
+                <div class="form-group">
+                    <label for="poem-title">Título del poema</label>
+                    <input type="text" id="poem-title" placeholder="Escribe el título de tu poema..." maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="poem-content">Contenido</label>
+                    <textarea id="poem-content" placeholder="Escribe tu poema aquí...
+
+Deja que las palabras fluyan libremente...
+
+Cada línea puede ser un verso..." maxlength="2000"></textarea>
+                </div>
+                <div class="tips">
+                    <h4>💡 Consejos para escribir</h4>
+                    <ul>
+                        <li>Escribe desde el corazón</li>
+                        <li>No te preocupes por la perfección</li>
+                        <li>Cada línea puede ser un verso</li>
+                        <li>Deja que las emociones fluyan</li>
+                    </ul>
+                </div>
+                <button type="submit" class="btn">💾 Guardar Poema</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">🗑️ Limpiar</button>
+            </form>
+        </div>
+
+        <!-- Pantalla de Detalle -->
+        <div id="detail" class="screen">
+            <h2>Detalle del Poema</h2>
+            <div id="poem-detail">
+                <div class="empty-state">
+                    <div class="icon">📖</div>
+                    <h3>Selecciona un poema</h3>
+                    <p>Ve a la pantalla de inicio y selecciona un poema para ver su detalle</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón flotante -->
+    <div class="fab" onclick="showScreen('editor')">✍️</div>
+
+    <script>
+        // Almacenamiento local
+        let poems = JSON.parse(localStorage.getItem('poems') || '[]');
+        let currentPoem = null;
+
+        // Funciones de navegación
+        function showScreen(screenId) {
+            // Ocultar todas las pantallas
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Mostrar la pantalla seleccionada
+            document.getElementById(screenId).classList.add('active');
+            
+            // Actualizar botones de navegación
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Cargar contenido específico
+            if (screenId === 'home') {
+                loadPoems();
+            }
+        }
+
+        // Cargar poemas
+        function loadPoems() {
+            const poemsList = document.getElementById('poems-list');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (poems.length === 0) {
+                poemsList.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                poemsList.style.display = 'block';
+                emptyState.style.display = 'none';
+                
+                poemsList.innerHTML = poems.map(poem => `
+                    <div class="poem-card" onclick="showPoemDetail('${poem.id}')">
+                        <div class="poem-title">${poem.title}</div>
+                        <div class="poem-preview">${poem.content.substring(0, 100)}${poem.content.length > 100 ? '...' : ''}</div>
+                        <div class="poem-date">${new Date(poem.createdAt).toLocaleDateString('es-ES')}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Mostrar detalle del poema
+        function showPoemDetail(poemId) {
+            const poem = poems.find(p => p.id === poemId);
+            if (!poem) return;
+            
+            currentPoem = poem;
+            showScreen('detail');
+            
+            const stats = getPoemStats(poem);
+            const detailHtml = `
+                <div class="poem-card">
+                    <h3>${poem.title}</h3>
+                    <div style="white-space: pre-line; margin: 20px 0; line-height: 1.6;">${poem.content}</div>
+                    <div style="color: #b2bec3; font-size: 12px;">
+                        Creado: ${new Date(poem.createdAt).toLocaleString('es-ES')}
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.lines}</div>
+                        <div class="stat-label">Versos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.words}</div>
+                        <div class="stat-label">Palabras</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.characters}</div>
+                        <div class="stat-label">Caracteres</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.paragraphs}</div>
+                        <div class="stat-label">Párrafos</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="editPoem('${poem.id}')">✏️ Editar</button>
+                    <button class="btn btn-danger" onclick="deletePoem('${poem.id}')">🗑️ Eliminar</button>
+                </div>
+            `;
+            
+            document.getElementById('poem-detail').innerHTML = detailHtml;
+        }
+
+        // Obtener estadísticas del poema
+        function getPoemStats(poem) {
+            const lines = poem.content.split('\n').filter(line => line.trim());
+            const words = poem.content.split(' ').filter(word => word.trim());
+            const characters = poem.content.length;
+            const paragraphs = poem.content.split('\n\n').filter(para => para.trim());
+            
+            return {
+                lines: lines.length,
+                words: words.length,
+                characters,
+                paragraphs: paragraphs.length
+            };
+        }
+
+        // Guardar poema
+        document.getElementById('poem-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('poem-title').value.trim();
+            const content = document.getElementById('poem-content').value.trim();
+            
+            if (!title || !content) {
+                alert('Por favor completa el título y el contenido del poema');
+                return;
+            }
+            
+            const newPoem = {
+                id: Date.now().toString(),
+                title,
+                content,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            poems.push(newPoem);
+            localStorage.setItem('poems', JSON.stringify(poems));
+            
+            alert('¡Poema guardado correctamente!');
+            clearForm();
+            showScreen('home');
+        });
+
+        // Limpiar formulario
+        function clearForm() {
+            document.getElementById('poem-title').value = '';
+            document.getElementById('poem-content').value = '';
+        }
+
+        // Editar poema
+        function editPoem(poemId) {
+            const poem = poems.find(p => p.id === poemId);
+            if (!poem) return;
+            
+            document.getElementById('poem-title').value = poem.title;
+            document.getElementById('poem-content').value = poem.content;
+            showScreen('editor');
+        }
+
+        // Eliminar poema
+        function deletePoem(poemId) {
+            if (confirm('¿Estás seguro de que quieres eliminar este poema?')) {
+                poems = poems.filter(p => p.id !== poemId);
+                localStorage.setItem('poems', JSON.stringify(poems));
+                showScreen('home');
+            }
+        }
+
+        // Cargar poemas al iniciar
+        loadPoems();
+    </script>
+</body>
+</html>

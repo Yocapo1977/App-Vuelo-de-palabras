@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Test Móvil - Vuelo de Palabras</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .status {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .info {
+            color: #e8e8e8;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        .url {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .device-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Test Móvil</h1>
+        <p class="info">Vuelo de Palabras - Verificación de Acceso</p>
+        
+        <div class="status">
+            <p class="success">✅ Servidor funcionando correctamente</p>
+            <p class="info">Puerto: 8080 | Protocolo: HTTP</p>
+        </div>
+        
+        <div class="device-info">
+            <h3>📊 Información del Dispositivo:</h3>
+            <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+            <p><strong>Pantalla:</strong> <span id="screen-size"></span></p>
+            <p><strong>Ventana:</strong> <span id="window-size"></span></p>
+            <p><strong>Orientación:</strong> <span id="orientation"></span></p>
+        </div>
+        
+        <div class="status">
+            <h3>🌐 URLs para Acceder:</h3>
+            
+            <p><strong>Principal:</strong></p>
+            <div class="url">http://172.30.0.2:8080/demo.html</div>
+            
+            <p><strong>Alternativa 1:</strong></p>
+            <div class="url">http://172.17.0.1:8080/demo.html</div>
+            
+            <p><strong>Local:</strong></p>
+            <div class="url">http://localhost:8080/demo.html</div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="demo.html" class="button">🚀 Ir a la Aplicación</a>
+            <a href="index.html" class="button">📄 Ver Información</a>
+        </div>
+        
+        <div class="status">
+            <h3>📱 Instrucciones para Celular:</h3>
+            <ol class="info">
+                <li>Asegúrate de estar en la misma red WiFi</li>
+                <li>Abre el navegador de tu celular</li>
+                <li>Copia una de las URLs de arriba</li>
+                <li>¡Disfruta escribiendo poemas!</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        // Mostrar información del dispositivo
+        document.getElementById('user-agent').textContent = navigator.userAgent;
+        document.getElementById('screen-size').textContent = screen.width + 'x' + screen.height;
+        document.getElementById('window-size').textContent = window.innerWidth + 'x' + window.innerHeight;
+        document.getElementById('orientation').textContent = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portrait';
+        
+        // Detectar cambios de orientación
+        window.addEventListener('orientationchange', function() {
+            setTimeout(function() {
+                document.getElementById('window-size').textContent = window.innerWidth + 'x' + window.innerHeight;
+                document.getElementById('orientation').textContent = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portrait';
+            }, 100);
+        });
+        
+        // Detectar cambios de tamaño de ventana
+        window.addEventListener('resize', function() {
+            document.getElementById('window-size').textContent = window.innerWidth + 'x' + window.innerHeight;
+            document.getElementById('orientation').textContent = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portrait';
+        });
+    </script>
+</body>
+</html>

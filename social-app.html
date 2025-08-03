@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vuelo de Palabras - Social</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #5a4fcf;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: #a29bfe;
+        }
+
+        .user-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #6c5ce7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-stats {
+            font-size: 12px;
+            color: #636e72;
+        }
+
+        .btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #5a4fcf;
+        }
+
+        .btn-secondary {
+            background: #636e72;
+        }
+
+        .btn-success {
+            background: #00b894;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .poem-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .poem-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .poem-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .poem-author {
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .poem-date {
+            font-size: 12px;
+            color: #b2bec3;
+        }
+
+        .poem-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .poem-preview {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .poem-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #636e72;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+        }
+
+        .empty-state .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .notification {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .notification.success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✈️ Vuelo de Palabras - Social</h1>
+        <p>Conecta con otros poetas y comparte tus versos</p>
+    </div>
+
+    <div class="container">
+        <div class="nav">
+            <button class="nav-btn active" onclick="showScreen('home')">🏠 Inicio</button>
+            <button class="nav-btn" onclick="showScreen('profile')">👤 Perfil</button>
+            <button class="nav-btn" onclick="showScreen('friends')">🤝 Amigos</button>
+            <button class="nav-btn" onclick="showScreen('search')">🔍 Buscar</button>
+            <button class="nav-btn" onclick="showScreen('editor')">✍️ Escribir</button>
+            <button class="nav-btn" onclick="showScreen('feed')">📰 Feed</button>
+        </div>
+
+        <!-- Pantalla de Inicio -->
+        <div id="home" class="screen active">
+            <h2>🏠 Mi Muro</h2>
+            <div id="home-content">
+                <div class="empty-state">
+                    <div class="icon">📝</div>
+                    <h3>¡Bienvenido a Vuelo de Palabras Social!</h3>
+                    <p>Conecta con otros poetas y comparte tus versos</p>
+                    <button class="btn" onclick="showScreen('profile')">👤 Crear Perfil</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Perfil -->
+        <div id="profile" class="screen">
+            <h2>👤 Mi Perfil</h2>
+            <div id="profile-content">
+                <div class="user-card">
+                    <div class="user-avatar" id="user-avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name" id="user-name">Usuario</div>
+                        <div class="user-stats" id="user-stats">0 poemas • 0 amigos</div>
+                    </div>
+                    <button class="btn" onclick="editProfile()">✏️ Editar</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="poems-count">0</div>
+                        <div class="stat-label">Poemas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="friends-count">0</div>
+                        <div class="stat-label">Amigos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="likes-count">0</div>
+                        <div class="stat-label">Me Gusta</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="views-count">0</div>
+                        <div class="stat-label">Vistas</div>
+                    </div>
+                </div>
+
+                <h3>📝 Mis Poemas</h3>
+                <div id="my-poems">
+                    <!-- Los poemas se cargarán aquí -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Amigos -->
+        <div id="friends" class="screen">
+            <h2>🤝 Mis Amigos</h2>
+            <div id="friends-content">
+                <div class="empty-state">
+                    <div class="icon">🤝</div>
+                    <h3>No tienes amigos aún</h3>
+                    <p>Busca otros poetas y conéctate con ellos</p>
+                    <button class="btn" onclick="showScreen('search')">🔍 Buscar Usuarios</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Búsqueda -->
+        <div id="search" class="screen">
+            <h2>🔍 Buscar Usuarios</h2>
+            <input type="text" class="search-box" id="search-input" placeholder="Buscar por nombre de usuario..." onkeyup="searchUsers()">
+            <div id="search-results">
+                <!-- Los resultados se cargarán aquí -->
+            </div>
+        </div>
+
+        <!-- Pantalla del Editor -->
+        <div id="editor" class="screen">
+            <h2>✍️ Escribir Poema</h2>
+            <form id="poem-form">
+                <div class="form-group">
+                    <label for="poem-title">Título del poema</label>
+                    <input type="text" id="poem-title" placeholder="Escribe el título de tu poema..." maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="poem-content">Contenido</label>
+                    <textarea id="poem-content" placeholder="Escribe tu poema aquí..." maxlength="2000"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="poem-public"> Hacer público (visible para todos)
+                    </label>
+                </div>
+                <button type="submit" class="btn">💾 Publicar Poema</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">🗑️ Limpiar</button>
+            </form>
+        </div>
+
+        <!-- Pantalla de Feed -->
+        <div id="feed" class="screen">
+            <h2>📰 Feed de Poemas</h2>
+            <div id="feed-content">
+                <div class="empty-state">
+                    <div class="icon">📰</div>
+                    <h3>No hay poemas públicos aún</h3>
+                    <p>Los poemas de tus amigos aparecerán aquí</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de la aplicación
+        let currentUser = {
+            id: 'user_' + Date.now(),
+            name: 'Usuario',
+            avatar: 'U',
+            poems: [],
+            friends: [],
+            followers: [],
+            following: []
+        };
+
+        let users = [currentUser];
+        let poems = [];
+        let friendRequests = [];
+
+        // Cargar datos guardados
+        function loadData() {
+            const savedUser = localStorage.getItem('socialUser');
+            const savedUsers = localStorage.getItem('socialUsers');
+            const savedPoems = localStorage.getItem('socialPoems');
+            const savedRequests = localStorage.getItem('socialRequests');
+
+            if (savedUser) currentUser = JSON.parse(savedUser);
+            if (savedUsers) users = JSON.parse(savedUsers);
+            if (savedPoems) poems = JSON.parse(savedPoems);
+            if (savedRequests) friendRequests = JSON.parse(savedRequests);
+        }
+
+        // Guardar datos
+        function saveData() {
+            localStorage.setItem('socialUser', JSON.stringify(currentUser));
+            localStorage.setItem('socialUsers', JSON.stringify(users));
+            localStorage.setItem('socialPoems', JSON.stringify(poems));
+            localStorage.setItem('socialRequests', JSON.stringify(friendRequests));
+        }
+
+        // Funciones de navegación
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            document.getElementById(screenId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Cargar contenido específico
+            if (screenId === 'profile') {
+                loadProfile();
+            } else if (screenId === 'friends') {
+                loadFriends();
+            } else if (screenId === 'search') {
+                loadSearch();
+            } else if (screenId === 'feed') {
+                loadFeed();
+            }
+        }
+
+        // Cargar perfil
+        function loadProfile() {
+            document.getElementById('user-name').textContent = currentUser.name;
+            document.getElementById('user-avatar').textContent = currentUser.avatar;
+            document.getElementById('poems-count').textContent = currentUser.poems.length;
+            document.getElementById('friends-count').textContent = currentUser.friends.length;
+            document.getElementById('likes-count').textContent = getTotalLikes();
+            document.getElementById('views-count').textContent = getTotalViews();
+            
+            loadMyPoems();
+        }
+
+        // Cargar amigos
+        function loadFriends() {
+            const friendsContent = document.getElementById('friends-content');
+            
+            if (currentUser.friends.length === 0) {
+                friendsContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🤝</div>
+                        <h3>No tienes amigos aún</h3>
+                        <p>Busca otros poetas y conéctate con ellos</p>
+                        <button class="btn" onclick="showScreen('search')">🔍 Buscar Usuarios</button>
+                    </div>
+                `;
+            } else {
+                friendsContent.innerHTML = currentUser.friends.map(friendId => {
+                    const friend = users.find(u => u.id === friendId);
+                    return `
+                        <div class="user-card">
+                            <div class="user-avatar">${friend.avatar}</div>
+                            <div class="user-info">
+                                <div class="user-name">${friend.name}</div>
+                                <div class="user-stats">${friend.poems.length} poemas</div>
+                            </div>
+                            <button class="btn" onclick="viewFriendProfile('${friend.id}')">👁️ Ver</button>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Cargar búsqueda
+        function loadSearch() {
+            const searchResults = document.getElementById('search-results');
+            const otherUsers = users.filter(u => u.id !== currentUser.id);
+            
+            if (otherUsers.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <h3>No hay otros usuarios</h3>
+                        <p>¡Sé el primero en crear poemas!</p>
+                    </div>
+                `;
+            } else {
+                searchResults.innerHTML = otherUsers.map(user => {
+                    const isFriend = currentUser.friends.includes(user.id);
+                    const hasRequest = friendRequests.some(r => 
+                        r.from === currentUser.id && r.to === user.id
+                    );
+                    
+                    return `
+                        <div class="user-card">
+                            <div class="user-avatar">${user.avatar}</div>
+                            <div class="user-info">
+                                <div class="user-name">${user.name}</div>
+                                <div class="user-stats">${user.poems.length} poemas</div>
+                            </div>
+                            ${isFriend ? 
+                                '<button class="btn btn-success">✅ Amigo</button>' :
+                                hasRequest ? 
+                                    '<button class="btn btn-secondary">⏳ Pendiente</button>' :
+                                    '<button class="btn" onclick="sendFriendRequest(\'' + user.id + '\')">➕ Agregar</button>'
+                            }
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Cargar feed
+        function loadFeed() {
+            const feedContent = document.getElementById('feed-content');
+            const publicPoems = poems.filter(p => p.isPublic);
+            
+            if (publicPoems.length === 0) {
+                feedContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📰</div>
+                        <h3>No hay poemas públicos aún</h3>
+                        <p>Los poemas de tus amigos aparecerán aquí</p>
+                    </div>
+                `;
+            } else {
+                feedContent.innerHTML = publicPoems.map(poem => {
+                    const author = users.find(u => u.id === poem.authorId);
+                    return `
+                        <div class="poem-card">
+                            <div class="poem-header">
+                                <div class="user-avatar">${author.avatar}</div>
+                                <div>
+                                    <div class="poem-author">${author.name}</div>
+                                    <div class="poem-date">${new Date(poem.createdAt).toLocaleDateString('es-ES')}</div>
+                                </div>
+                            </div>
+                            <div class="poem-title">${poem.title}</div>
+                            <div class="poem-preview">${poem.content.substring(0, 150)}${poem.content.length > 150 ? '...' : ''}</div>
+                            <div class="poem-actions">
+                                <button class="action-btn" onclick="likePoem('${poem.id}')">❤️ ${poem.likes || 0}</button>
+                                <button class="action-btn" onclick="commentPoem('${poem.id}')">💬 ${poem.comments ? poem.comments.length : 0}</button>
+                                <button class="action-btn" onclick="sharePoem('${poem.id}')">📤</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Cargar mis poemas
+        function loadMyPoems() {
+            const myPoems = document.getElementById('my-poems');
+            const userPoems = poems.filter(p => p.authorId === currentUser.id);
+            
+            if (userPoems.length === 0) {
+                myPoems.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📝</div>
+                        <h3>No has escrito poemas aún</h3>
+                        <p>Comienza a escribir tu primer poema</p>
+                        <button class="btn" onclick="showScreen('editor')">✍️ Escribir</button>
+                    </div>
+                `;
+            } else {
+                myPoems.innerHTML = userPoems.map(poem => `
+                    <div class="poem-card">
+                        <div class="poem-title">${poem.title}</div>
+                        <div class="poem-preview">${poem.content.substring(0, 100)}${poem.content.length > 100 ? '...' : ''}</div>
+                        <div class="poem-actions">
+                            <button class="btn btn-secondary" onclick="editPoem('${poem.id}')">✏️ Editar</button>
+                            <button class="btn btn-danger" onclick="deletePoem('${poem.id}')">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Funciones auxiliares
+        function getTotalLikes() {
+            return poems.filter(p => p.authorId === currentUser.id)
+                      .reduce((total, poem) => total + (poem.likes || 0), 0);
+        }
+
+        function getTotalViews() {
+            return poems.filter(p => p.authorId === currentUser.id)
+                      .reduce((total, poem) => total + (poem.views || 0), 0);
+        }
+
+        // Funciones de interacción
+        function sendFriendRequest(userId) {
+            const request = {
+                id: 'req_' + Date.now(),
+                from: currentUser.id,
+                to: userId,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+            
+            friendRequests.push(request);
+            saveData();
+            
+            showNotification('Solicitud de amistad enviada', 'success');
+        }
+
+        function likePoem(poemId) {
+            const poem = poems.find(p => p.id === poemId);
+            if (poem) {
+                if (!poem.likes) poem.likes = [];
+                if (!poem.likes.includes(currentUser.id)) {
+                    poem.likes.push(currentUser.id);
+                    saveData();
+                    loadFeed();
+                }
+            }
+        }
+
+        function commentPoem(poemId) {
+            const comment = prompt('Escribe tu comentario:');
+            if (comment) {
+                const poem = poems.find(p => p.id === poemId);
+                if (poem) {
+                    if (!poem.comments) poem.comments = [];
+                    poem.comments.push({
+                        id: 'com_' + Date.now(),
+                        authorId: currentUser.id,
+                        authorName: currentUser.name,
+                        content: comment,
+                        createdAt: new Date().toISOString()
+                    });
+                    saveData();
+                    loadFeed();
+                }
+            }
+        }
+
+        function sharePoem(poemId) {
+            const poem = poems.find(p => p.id === poemId);
+            if (poem) {
+                const shareText = `${poem.title}\n\n${poem.content}\n\n---\nCompartido desde Vuelo de Palabras Social`;
+                if (navigator.share) {
+                    navigator.share({
+                        title: poem.title,
+                        text: shareText
+                    });
+                } else {
+                    navigator.clipboard.writeText(shareText);
+                    showNotification('Poema copiado al portapapeles', 'success');
+                }
+            }
+        }
+
+        // Funciones del formulario
+        document.getElementById('poem-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('poem-title').value.trim();
+            const content = document.getElementById('poem-content').value.trim();
+            const isPublic = document.getElementById('poem-public').checked;
+            
+            if (!title || !content) {
+                showNotification('Por favor completa el título y el contenido', 'error');
+                return;
+            }
+            
+            const newPoem = {
+                id: 'poem_' + Date.now(),
+                title,
+                content,
+                authorId: currentUser.id,
+                authorName: currentUser.name,
+                isPublic,
+                likes: [],
+                comments: [],
+                views: 0,
+                createdAt: new Date().toISOString()
+            };
+            
+            poems.push(newPoem);
+            currentUser.poems.push(newPoem.id);
+            saveData();
+            
+            showNotification('¡Poema publicado correctamente!', 'success');
+            clearForm();
+            showScreen('profile');
+        });
+
+        function clearForm() {
+            document.getElementById('poem-title').value = '';
+            document.getElementById('poem-content').value = '';
+            document.getElementById('poem-public').checked = false;
+        }
+
+        function editProfile() {
+            const newName = prompt('Nuevo nombre de usuario:', currentUser.name);
+            if (newName && newName.trim()) {
+                currentUser.name = newName.trim();
+                currentUser.avatar = newName.trim().charAt(0).toUpperCase();
+                saveData();
+                loadProfile();
+                showNotification('Perfil actualizado', 'success');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Búsqueda de usuarios
+        function searchUsers() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const otherUsers = users.filter(u => 
+                u.id !== currentUser.id && 
+                u.name.toLowerCase().includes(query)
+            );
+            
+            const searchResults = document.getElementById('search-results');
+            
+            if (otherUsers.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <h3>No se encontraron usuarios</h3>
+                        <p>Intenta con otro nombre</p>
+                    </div>
+                `;
+            } else {
+                searchResults.innerHTML = otherUsers.map(user => {
+                    const isFriend = currentUser.friends.includes(user.id);
+                    const hasRequest = friendRequests.some(r => 
+                        r.from === currentUser.id && r.to === user.id
+                    );
+                    
+                    return `
+                        <div class="user-card">
+                            <div class="user-avatar">${user.avatar}</div>
+                            <div class="user-info">
+                                <div class="user-name">${user.name}</div>
+                                <div class="user-stats">${user.poems.length} poemas</div>
+                            </div>
+                            ${isFriend ? 
+                                '<button class="btn btn-success">✅ Amigo</button>' :
+                                hasRequest ? 
+                                    '<button class="btn btn-secondary">⏳ Pendiente</button>' :
+                                    '<button class="btn" onclick="sendFriendRequest(\'' + user.id + '\')">➕ Agregar</button>'
+                            }
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Inicializar aplicación
+        loadData();
+        loadProfile();
+    </script>
+</body>
+</html>
